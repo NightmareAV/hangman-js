@@ -1,0 +1,149 @@
+<!Doctype html>
+<html>
+<head>
+<meta charset="uts-8">
+<title>Hangman</title>
+</head>
+<body>
+	<h1>Давай поиграем</h1>
+	<script src="https://code.jquery.com/jquery-2.1.0.js"></script>
+	<canvas id="canvas" width=500 height=500></canvas>
+	
+	<script>	
+//эшафот	
+	function hangman(count){
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext("2d");
+	ctx.beginPath();
+	ctx.moveTo(50,100);
+	ctx.lineTo(50,50);
+	ctx.lineTo(200,50);
+	ctx.lineTo(200,450);
+	ctx.lineTo(50,450);
+	ctx.lineTo(50,400);
+	ctx.lineTo(200,400);
+	ctx.stroke();
+	
+//человек	
+	if (count === 5){
+	//голова
+	ctx.strokeRect(30,100,40,40);
+	};
+	
+	//тело
+	if (count === 4){
+	ctx.beginPath();
+	ctx.moveTo(50,140);
+	ctx.lineTo(50,250);
+	ctx.stroke();
+	};
+	
+	//руки
+	if(count === 3){
+		//левая
+	ctx.beginPath();
+	ctx.moveTo(50,180);
+	ctx.lineTo(5,160);
+	ctx.stroke();
+	};
+		//правая
+	if(count === 2){
+	ctx.beginPath();
+	ctx.moveTo(50,180);
+	ctx.lineTo(95,160);
+	ctx.stroke();
+	};
+	//ноги
+		//левая
+	if(count === 1){
+	ctx.beginPath();
+	ctx.moveTo(50,250);
+	ctx.lineTo(25,310);
+	ctx.stroke();
+	};
+		//правая
+	if(count === 0){
+	ctx.beginPath();
+	ctx.moveTo(50,250);
+	ctx.lineTo(75,310);
+	ctx.stroke();
+	}; 
+	 };
+	 
+	var words=["мышь","яблоко","автомобиль","ручка","ноутбук"];//слова которые буду загадывать
+	var answerArr=["Млекопитающее-грызун: ","Фрукт, зеленое, растет на дереве: ","Личный транспорт передвижения: ","Предмет для написания: ","Компактный портативный компьютер: "]//подсказки для пользователя
+	var resultAnswer=[];//ответы пользователя
+	var noRightLetter=[];//неверные ответы пользователя
+	var countForNoRightLetter = 0; //счетчик для массива неверных букв
+	var numberRandomOfArray = Math.floor(Math.random() * words.length)//случайная цифра в диапазоне массива
+	var randomWord = words[numberRandomOfArray];//случайное слово
+	var countTry = 6; //счетчик количества попыток(конечности)
+	var guessLetterCount = randomWord.length; //счетчик угаданных букв
+	
+//генерируес массив для пользователя
+	for(var k=0; k < randomWord.length;  k++){
+	resultAnswer[k]= " - ";
+	};
+	
+	var check; //для проверки. Добавили букву или нет!
+//добавляем букву	
+	function addLetter(letter){
+		//проверка на повтор
+		for (var j=0; j < noRightLetter.length; j++){
+		if(letter === noRightLetter[j]){
+		countTry--;
+		hangman(countTry);
+		return alert("Такая буква была");		
+		};
+		 };
+		//добавляем букву
+		check = false; //устанавливаем в false т.к. буква еще не добавлена
+		for(var i=0; i < randomWord.length; i++) {
+		if (letter === randomWord[i]){
+		resultAnswer[i]=letter;
+		guessLetterCount--;
+		noRightLetter[countForNoRightLetter]=letter; //добавление буквы в массив неверно введенных букв
+		countForNoRightLetter++;
+		check = true; //добавили букву :)
+		};
+		 };
+	};
+	function minusTry(check){//проверяем добавили ли букву, если нет то, уменьшаем счетчик попыток и добавляем букву для проверки на повторение
+		if(check === true){
+		return;
+		}else{
+		countTry--;
+		hangman(countTry);
+		noRightLetter[countForNoRightLetter]=letter; //добавляем неверно нвведеную букву
+		countForNoRightLetter++;
+		  };
+	};
+		
+	  
+	function alertMessage(){//выводим результат после окончания игрового цикла
+		alert("Ваше слово: " + resultAnswer.join(""));
+		alert("Загаданное слово: " + randomWord);
+	};
+	
+	
+		
+//игровой цикл
+	while (guessLetterCount > 0 && countTry > 0) {
+	alert("Осталось попыток: " + countTry + "  " + answerArr[numberRandomOfArray] + resultAnswer.join(""));
+	var letter = prompt("Ведите одну букву!"," ").toLowerCase();//вводим только маленькие буквы
+	if (letter === null){
+	break;
+	}if (letter.length != 1){
+	alert("Одну букву");
+	countTry--;
+	hangman(countTry);
+	} else {
+	addLetter(letter);
+	minusTry(check);
+	};
+	 }; 
+	
+	alertMessage();//выводим статистику
+	</script>
+</body>
+</html>
